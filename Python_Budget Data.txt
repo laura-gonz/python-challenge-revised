@@ -1,0 +1,85 @@
+#libraries or dependencies 
+import os
+import csv 
+
+#variable is being defined by inputted data from Excel 
+Budget_DataLoad = os.path.join ("Resources\BudgetData.csv")
+
+#create file output 
+File_Output = "Analysis/PyBank.txt"
+
+
+#initialize parameters 
+Months = 0
+previousProfit= 0
+TotalProfit = 0
+change = 0 
+change_Month = 0
+total_Change = 0 
+
+greatest_Increase = 0 
+greatest_Increase_Month = ""
+
+greatest_Decrease = 0 
+greatest_Decrease_Month = ""
+
+column_index = 2
+changes_ProfitLosses = 0
+
+with open (Budget_DataLoad) as data:
+    reader = csv.reader(data)
+    #header row 
+    header = next(reader)
+
+    for Row in reader:
+        #print(Row)
+        #exit()
+        TotalProfit = TotalProfit + int(Row[1])
+    
+        Months = Months + 1 
+
+        CurrentProfit = int(Row[1]) #January
+        
+        if previousProfit != 0:
+            change = CurrentProfit - previousProfit 
+            total_Change += change
+            #total change equals to itself plus change 
+
+            change_Month = change_Month + 1 
+
+            if change > greatest_Increase: 
+                greatest_Increase = change 
+
+                greatest_Increase_Month = Row[0]
+                #index starts with 0
+
+
+            if change < greatest_Decrease: 
+                greatest_Decrease = change 
+
+                greatest_Decrease_Month = Row[0]
+
+
+        previousProfit = CurrentProfit 
+
+
+    print(greatest_Decrease)
+    print(greatest_Decrease_Month)
+
+ 
+
+    
+output = f"""
+Financial Analysis
+----------------------------
+Total Months: {Months}
+Total: ${TotalProfit}
+Average Change: ${total_Change/change_Month:,.2f}
+Greatest Increase in Profits: {greatest_Increase_Month} (${greatest_Increase})
+Greatest Decrease in Profits: {greatest_Decrease_Month} (${greatest_Decrease})
+"""    
+
+print(output) 
+
+with open (File_Output, "w") as fdata:
+    fdata.write(output)
